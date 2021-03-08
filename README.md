@@ -7,7 +7,7 @@ This is a completely independent module can be used in any <bold>module</bold> t
     <li>You can use any server to add it's router</li>
     <li> It's completely independent with every other routers.</li>
     <li>It uses mongoDb to store the data</li>
-    <li>It can be used after connecting your project with <bold>MongoDb</bold></li>
+    <li>It can be used after connecting your project with <span><bold>MongoDb</bold></span></li>
     <li>This module stores user Activity logs as well into Database.</li>
 </ul>>
 
