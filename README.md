@@ -9,7 +9,7 @@ This is a completely independent module can be used in any <bold>module</bold> t
     <li>It uses mongoDb to store the data</li>
     <li>It can be used after connecting your project with <span><bold>MongoDb</bold></span></li>
     <li>This module stores user Activity logs as well into Database.</li>
-</ul>>
+</ul>
 
 ## how to use this module
 <ul>
@@ -42,7 +42,7 @@ router.get('/user-profile', authmiddleware.isLoggedIn, httpHandler(async (req,re
 
 It provide's several API's for all operations we can use then at client side, with rout wrapper <bold>/auth</bold>. Look at for some functionalities with API formate explained below.
 <ul>
-    <li><bold>Registration</bold>: For registration use the API with body data <bold>name</bold>, <bold>email</bold>,<bold>password</bold></li>
+    <li><bold>Registration</bold>: For registration use the API with body data <bold>name</bold>, <bold>email</bold>,<bold>password</bold>
     <li>Reqrest Method should be <bold>POST</bold></li>
-    <li><bold>API Formate</bold><pre><your-domain>/auth/register</pre></li>
+    <li><bold>API Formate</bold><pre>`your-domain`/auth/register</pre></li></li>
 </ul>
