@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import httpHandler from '../../commons/http-handler';
+import httpHandler from '../../http-handler';
 import authService from '../service';
 import authMiddleware from '../service/auth-midleware';
 import sessionService from '../service/session-service';

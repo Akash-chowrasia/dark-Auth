@@ -1,6 +1,6 @@
 import createError from 'http-errors-lite';
 import { StatusCodes } from 'http-status-codes';
-import httpHandler from '../../commons/http-handler';
+import httpHandler from '../../http-handler';
 import authModels from '../model';
 import sessionService from './session-service';
 import userService from './user-services';
