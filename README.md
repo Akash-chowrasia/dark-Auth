@@ -20,12 +20,12 @@ This is a completely independent module can be used in any **module** to provide
 * The middlewares are **isLoggedIn**, **isUserExists** & **isUserVerified**
 ### Example for using middlewares to protect your credencials.
 Suppose I have a **Userprofile** router which sends user users details to the client. you can use **isLoggedIn** middleware to protect it from unauthorised people.
-`
+<pre>
 router.get('/user-profile', authmiddleware.isLoggedIn, httpHandler(async (req,res,next) =>{
     // write your desired code.
     // now this router is being protected by `isLoggedIn` middleware from unauthorised users.
 }));
-`
+</pre>
 ## How to use It's API's from client side one's it has been setup to your back-end server.
 It provide's several API's for all operations we can use then at client side, with rout wrapper **/auth**. Look at for some functionalities with API formate explained below.
 * **Registration**: For registration use the API with body data (**name**, **email**,**password**)
@@ -54,4 +54,12 @@ It provide's several API's for all operations we can use then at client side, wi
 * **Logout**: This API call delete's the session and make user logged out from the account, use this API with body no body data. This functionality is lashed with **isLoggedIn** middleware, so user should must be loggedIn before logout.  
   * Request method must be **DELETE**
   * **API Formate**:`your-domain/auth/logout`
+## Dependencies to use this module
 
+* You should have installed **npm** and **node** in your computer.
+* you should have installed all the modules listed in **package.json** in dependencies section.
+* you should have installed **mongoDb** and connected with your project using **mongoose**.
+* remember this module uses **esm** package, hence it uses **import** instead of **require** statement.
+
+<hr><hr>
+Thank you !!
