@@ -43,6 +43,8 @@ router.get('/user-profile', authmiddleware.isLoggedIn, httpHandler(async (req,re
 It provide's several API's for all operations we can use then at client side, with rout wrapper <bold>/auth</bold>. Look at for some functionalities with API formate explained below.
 <ul>
     <li><bold>Registration</bold>: For registration use the API with body data <bold>name</bold>, <bold>email</bold>,<bold>password</bold>
+    <ul>
     <li>Reqrest Method should be <bold>POST</bold></li>
-    <li><bold>API Formate</bold><pre>`your-domain`/auth/register</pre></li></li>
+    <li><bold>API Formate</bold><pre>`your-domain`/auth/register</pre></li></ul>
+    </li>
 </ul>
