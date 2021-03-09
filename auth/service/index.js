@@ -1,3 +1,4 @@
+import assert from 'assert';
 import createError from 'http-errors-lite';
 import { StatusCodes } from 'http-status-codes';
 import md5 from 'md5';
@@ -28,8 +29,11 @@ authService.registerUser = async (data) => {
   const { email } = data;
 
   const emailExist = await authModels.user.findOne({ email });
-  if (emailExist)
-    throw createError(StatusCodes.FORBIDDEN, 'This user already registered');
+  assert(
+    emailExist === null,
+    createError(StatusCodes.FORBIDDEN, 'This user already registered')
+  );
+
   await authModels.user.create({ ...data, password: hashedPassword });
 
   return {
@@ -41,9 +45,13 @@ authService.registerUser = async (data) => {
 
 authService.loginUser = async ({ email, password }) => {
   const user = await authModels.user.findOne({ email });
-  if (!user) throw createError(StatusCodes.BAD_REQUEST, 'Login Failed');
-  if (md5(password) !== user.password)
-    throw createError(StatusCodes.UNAUTHORIZED, 'Incorrect Password');
+  assert(user !== null, createError(StatusCodes.BAD_REQUEST, 'Login Failed'));
+
+  assert(
+    md5(password) === user.password,
+    createError(StatusCodes.UNAUTHORIZED, 'Incorrect Password')
+  );
+
   return {
     user: user._id,
     status: true,
@@ -56,11 +64,13 @@ authService.verifyEmail = async ({ verification_code, email }) => {
     verification_code,
   });
 
-  if (!record)
-    throw createError(
+  assert(
+    record !== null,
+    createError(
       StatusCodes.BAD_REQUEST,
       'either you are verified or you entered a wrong verification code'
-    );
+    )
+  );
 
   await authModels.user.updateOne({ email }, { is_email_verified: true });
 
@@ -95,19 +105,23 @@ authService.resetPassword = async ({ token, new_password: newPassword }) => {
 authService.changePassword = async ({
   old_password: oldPassword,
   new_password: newPassword,
-  email,
+  user_id: userId,
 }) => {
-  const user = await authModels.user.findOne({ email });
-  if (md5(oldPassword) !== user.password)
-    throw createError(
+  const user = await authModels.user.findById(userId);
+  assert(
+    md5(oldPassword) === user.password,
+    createError(
       StatusCodes.UNAUTHORIZED,
       'Please enter the correct old password '
-    );
+    )
+  );
+
   const hashPassword = md5(newPassword);
-  await authModels.user.updateOne({ email }, { password: hashPassword });
+  await authModels.user.findByIdAndUpdate(userId, { password: hashPassword });
   return {
     status: true,
-    post_hook: () => storeLog({ email, message: 'password changed....' }),
+    post_hook: () =>
+      storeLog({ email: user.email, message: 'password changed....' }),
   };
 };
 

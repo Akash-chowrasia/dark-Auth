@@ -1,3 +1,4 @@
+import assert from 'assert';
 import createError from 'http-errors-lite';
 import { StatusCodes } from 'http-status-codes';
 import httpHandler from '../../commons/http-handler';
@@ -10,16 +11,21 @@ const authMiddleware = {};
 authMiddleware.isLoggedIn = httpHandler(async (req, res, next) => {
   const clientSession = req.cookies.session_id;
   const record = await sessionService.getSession(clientSession);
-  if (!record) throw createError(StatusCodes.BAD_REQUEST, 'Please login first');
+  assert(
+    record !== null,
+    createError(StatusCodes.BAD_REQUEST, 'Please login first')
+  );
 
-  if (record.session_id !== clientSession)
-    throw createError(StatusCodes.UNAUTHORIZED, 'invalid session');
-  if (new Date() - record.created_at > 2 * 30 * 1000) {
+  assert(
+    record.session_id === clientSession,
+    createError(StatusCodes.UNAUTHORIZED, 'invalid session')
+  );
+  if (new Date() - record.created_at > 20 * 30 * 1000) {
     await sessionService.dropSession(clientSession);
     res.clearCookie('session_id');
     throw createError(StatusCodes.UNAUTHORIZED, 'session expired ....');
   }
-  if (new Date() - record.created_at < 2 * 30 * 1000) {
+  if (new Date() - record.created_at < 20 * 30 * 1000) {
     await sessionService.dropSession(clientSession);
     const sessionId = await sessionService.genSession(record.user_id);
     res.cookie('session_id', sessionId, { httpOnly: true });
@@ -31,18 +37,24 @@ authMiddleware.isLoggedIn = httpHandler(async (req, res, next) => {
 export const doesUserExist = httpHandler(async (req, res, next) => {
   const { email } = req.body;
   const emailExist = await authModels.user.findOne({ email });
-  if (!emailExist)
-    throw createError(StatusCodes.UNAUTHORIZED, 'This email is not registered');
+  assert(
+    emailExist !== null,
+    createError(StatusCodes.UNAUTHORIZED, 'This email is not registered')
+  );
   next();
 });
 
 export const isUserVerified = httpHandler(async (req, res, next) => {
   const { email } = req.body;
   const user = await authModels.user.findOne({ email });
-  if (!user)
-    throw createError(StatusCodes.BAD_REQUEST, 'This user does not exists');
-  if (!user.is_email_verified)
-    throw createError(StatusCodes.UNAUTHORIZED, 'Please verify first');
+  assert(
+    user !== null,
+    createError(StatusCodes.BAD_REQUEST, 'This user does not exists')
+  );
+  assert(
+    user.is_email_verified === true,
+    createError(StatusCodes.UNAUTHORIZED, 'Please verify first')
+  );
   next();
 });
 

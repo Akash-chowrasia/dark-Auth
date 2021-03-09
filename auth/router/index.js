@@ -94,12 +94,11 @@ router.put(
   authMiddleware.isLoggedIn,
   httpHandler(async (req, res) => {
     const { old_password, new_password } = req.body;
-    const { user } = req;
-    const { email } = user;
+    const userId = req.user._id;
     const { post_hook: postHook } = await authService.changePassword({
       old_password,
       new_password,
-      email,
+      user_id: userId,
     });
     res.status(200).send({ message: 'password changed successfully' });
     await postHook();
