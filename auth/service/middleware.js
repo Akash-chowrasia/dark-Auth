@@ -1,6 +1,6 @@
 import createError from 'http-errors-lite';
 import { StatusCodes } from 'http-status-codes';
-import httpHandler from '../../http-handler';
+import httpHandler from '../../commons/http-handler';
 import authModels from '../model';
 import sessionService from './session-service';
 import userService from './user-services';
@@ -14,19 +14,21 @@ authMiddleware.isLoggedIn = httpHandler(async (req, res, next) => {
 
   if (record.session_id !== clientSession)
     throw createError(StatusCodes.UNAUTHORIZED, 'invalid session');
-  if (record.expires_at - new Date() > 3 * 30 * 1000) {
+  if (new Date() - record.created_at > 2 * 30 * 1000) {
+    await sessionService.dropSession(clientSession);
+    res.clearCookie('session_id');
     throw createError(StatusCodes.UNAUTHORIZED, 'session expired ....');
   }
-  if (record.expires_at - new Date() < 3 * 30 * 1000) {
+  if (new Date() - record.created_at < 2 * 30 * 1000) {
     await sessionService.dropSession(clientSession);
-    const sessionId = await sessionService.genSession(record._id);
+    const sessionId = await sessionService.genSession(record.user_id);
     res.cookie('session_id', sessionId, { httpOnly: true });
   }
   req.user = await userService.getUserById(record.user_id);
   next();
 });
 
-authMiddleware.isUserExist = httpHandler(async (req, res, next) => {
+export const doesUserExist = httpHandler(async (req, res, next) => {
   const { email } = req.body;
   const emailExist = await authModels.user.findOne({ email });
   if (!emailExist)
@@ -34,7 +36,7 @@ authMiddleware.isUserExist = httpHandler(async (req, res, next) => {
   next();
 });
 
-authMiddleware.isUserVerified = httpHandler(async (req, res, next) => {
+export const isUserVerified = httpHandler(async (req, res, next) => {
   const { email } = req.body;
   const user = await authModels.user.findOne({ email });
   if (!user)

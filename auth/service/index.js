@@ -29,7 +29,7 @@ authService.registerUser = async (data) => {
 
   const emailExist = await authModels.user.findOne({ email });
   if (emailExist)
-    throw createError(StatusCodes.UNAUTHORIZED, 'This user already registered');
+    throw createError(StatusCodes.FORBIDDEN, 'This user already registered');
   await authModels.user.create({ ...data, password: hashedPassword });
 
   return {
@@ -58,7 +58,7 @@ authService.verifyEmail = async ({ verification_code, email }) => {
 
   if (!record)
     throw createError(
-      StatusCodes.FORBIDDEN,
+      StatusCodes.BAD_REQUEST,
       'either you are verified or you entered a wrong verification code'
     );
 

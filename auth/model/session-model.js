@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const expireStamp = () => new Date(new Date() + 10 * 60 * 1000);
+const expireStamp = () => new Date();
 
 const schema = mongoose.Schema({
   user_id: {
@@ -11,7 +11,7 @@ const schema = mongoose.Schema({
     type: String,
     required: true,
   },
-  expires_at: {
+  created_at: {
     type: Date,
     default: expireStamp,
   },
